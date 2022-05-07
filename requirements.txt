@@ -1,0 +1,4 @@
+click==8.1.2
+psutil==5.9.0
+python_Levenshtein==0.12.2
+setuptools==60.10.0

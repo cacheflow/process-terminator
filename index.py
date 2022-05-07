@@ -1,7 +1,7 @@
 import psutil
 import math
-
 import os 
+import click
 from Levenshtein import distance as lev
 
 
@@ -15,15 +15,15 @@ class RunningProcesses:
       self.cache.insert(0, (proc.name().lower(), proc.pid))
     return self.cache 
 
-running_processes = RunningProcesses().get()
-
 class ProcessMatchFinder:
 
-  def __init__(self): 
+  def __init__(self):
+    self.found_exact_match = False 
     self.process_name = ''
     self.process_id = None 
 
   def find(self, process_to_find): 
+    print(f'passing in {process_to_find}')
     running_processes = RunningProcesses().get()
     current_process_name = ''
     current_process_id = None
@@ -39,5 +39,11 @@ class ProcessMatchFinder:
         self.process_id = current_process_id
     return (self.process_name, self.process_id)
 
+@click.command()
+@click.argument('process_name')
+def run(process_name):
+  ProcessMatchFinder().find(process_name)
 
+if __name__ == "__main__":
+  run()
 
