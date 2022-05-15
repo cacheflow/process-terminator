@@ -23,7 +23,6 @@ class ProcessMatchFinder:
     self.process_id = None 
 
   def find(self, process_to_find): 
-    print(f'passing in {process_to_find}')
     running_processes = RunningProcesses().get()
     current_process_name = ''
     current_process_id = None
@@ -41,7 +40,10 @@ class ProcessMatchFinder:
 
 @click.command()
 @click.argument('process_name')
-def run(process_name):
+def run(process_name = ''):
+  if not process_name:
+    print('No process name given')
+    return None
   ProcessMatchFinder().find(process_name)
 
 if __name__ == "__main__":
