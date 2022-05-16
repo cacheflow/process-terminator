@@ -1,8 +1,14 @@
 import psutil
+import re
+import hashlib
+import pdb
 import math
-import os 
+import os
 import click
 from Levenshtein import distance as lev
+
+def hash_process_name(process_name):
+  return hashlib.sha1(process_name.encode("utf-8")).hexdigest()
 
 
 class RunningProcesses:
@@ -18,25 +24,24 @@ class RunningProcesses:
 class ProcessMatchFinder:
 
   def __init__(self):
-    self.found_exact_match = False 
-    self.process_name = ''
+    self.found_exact_match = False
+    self.process_names = set()
     self.process_id = None 
 
   def find(self, process_to_find): 
     running_processes = RunningProcesses().get()
     current_process_name = ''
     current_process_id = None
-    current_min = math.inf 
+    current_min = math.inf
 
     for running_process in running_processes: 
       current_process_name = running_process[0]
       current_process_id = running_process[1]
-      lev_distance = lev(process_to_find, current_process_name)
-      if current_min > lev_distance:
-        current_min = lev_distance
-        self.process_name = current_process_name
-        self.process_id = current_process_id
-    return (self.process_name, self.process_id)
+      search_str = r"\b" + process_to_find + r"\b"
+      match_output = re.search(search_str, current_process_name)
+      if match_output is not None:
+        self.process_names.add(current_process_name.strip())
+
 
 @click.command()
 @click.argument('process_name')
